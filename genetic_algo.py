@@ -2,15 +2,13 @@ import numpy as np
 import math
 import operator
 from copy import deepcopy
-from sympy.combinatorics.graycode import *
 import matplotlib.pyplot as plt
-from tabulate import tabulate
+import random
 
 pop = 20
 elements = 22
 iteration = 100
 x_range = [-1, 2]
-gray = False
 
 
 def fun_to_maximize(fu_number):
@@ -32,13 +30,7 @@ class Chromosome:
         self.recursive_sum = recursive_sum
 
     def bin2num(self):
-        if gray:
-            self.genotype10 = \
-                int(gray_to_bin("".join(map(str, self.genotype2))),
-                    base=2)
-        else:
-            self.genotype10 = \
-                int("".join(map(str, self.genotype2)), base=2)
+        self.genotype10 = int("".join(map(str, self.genotype2)), base=2)
 
     def calc_fenotype(self):
         self.bin2num()
@@ -158,14 +150,7 @@ class Populus:
         else:
             self.p_mut = self.p_mut_low
 
-# Stale p_mut
-p = []
-table_p = []
-for i in range(0, 10):
-    p.append(Populus([0.001, 0.001], 0.8))
-    for j in range(0, iteration):
-        p[i].generate_generation()
-    table_p.append(p[i].total_best)
+
 # Zmienne p_mut
 q = []
 table_q = []
@@ -174,33 +159,9 @@ for i in range(0, 10):
     for j in range(0, iteration):
         q[i].generate_generation()
     table_q.append(q[i].total_best)
-# Inne p_cross
-r = []
-table_r = []
-for i in range(0, 10):
-    r.append(Populus([0.001, 0.001], 0.4))
-    for j in range(0, iteration):
-        r[i].generate_generation()
-    table_r.append(r[i].total_best)
-# Nowe kodowanie
-gray = True
-s = []
-table_s = []
-for i in range(0, 10):
-    s.append(Populus([0.001, 0.001], 0.8))
-    for j in range(0, iteration):
-        s[i].generate_generation()
-    table_s.append(s[i].total_best)
-# Gray i zmienny p_mut
-t = []
-table_t = []
-for i in range(0, 10):
-    t.append(Populus([0.001, 0.1], 0.8))
-    for j in range(0, iteration):
-        t[i].generate_generation()
-    table_t.append(t[i].total_best)
 
 
+#TODO Move plotting to another file and make it plot data from mongoDB
 def plot_demo(_p, name):
     for i in range(0, 4):
         plt.plot(_p[i].best, label="Best")
@@ -211,31 +172,4 @@ def plot_demo(_p, name):
         plt.savefig("".join([name, "rys", str(i), ".pdf"]), dpi=72)
         plt.clf()
 
-
-plot_demo(p, "")
 plot_demo(q, "q")
-plot_demo(r, "r")
-plot_demo(s, "s")
-plot_demo(t, "t")
-
-
-def dec_cnt(_p):
-    y = []
-    for i in range(0, 10):
-        y.append(_p[i].total_best)
-    _mean = sum(y)/10
-    _subsum = [(x - _mean) ** 2 for x in y]
-    return [max(y), math.sqrt(sum(_subsum) / 10)]
-
-
-table_p.extend(dec_cnt(p))
-table_q.extend(dec_cnt(q))
-table_r.extend(dec_cnt(r))
-table_s.extend(dec_cnt(s))
-table_t.extend(dec_cnt(t))
-table = [table_p, table_q, table_r, table_s, table_t]
-# list(map(list, zip(*table)))
-# print(table)
-
-header = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "Maksimum", "Odchylenie"]
-print(tabulate(table, headers=header, tablefmt="latex"))
