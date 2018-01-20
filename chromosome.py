@@ -20,9 +20,10 @@ class Chromosome:
 
     def mutate(self):
         random_gene = random.choice(list(self.genotype.keys()))
+        #TODO : musi byc inne
         self.genotype[random_gene] = self.parameter_options[random_gene].choose_random()
 
     def __str__(self):
         return str(self.genotype)
 
-    __repr__ = __str__
+    __repr__ = __str__dsassd

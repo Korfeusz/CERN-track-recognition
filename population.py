@@ -7,7 +7,7 @@ import random
 
 class Population:
     def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop):
-        self.pop = pop
+        self.pop = pop #wielkosc populacji
         self.parameter_options = parameter_options
         self.fun_to_maximize = fun_to_maximize
         self.p_mut_low = p_mut_range[0]
