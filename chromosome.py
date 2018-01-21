@@ -26,4 +26,4 @@ class Chromosome:
     def __str__(self):
         return str(self.genotype)
 
-    __repr__ = __str__dsassd
+    __repr__ = __str__

@@ -14,3 +14,4 @@ scipy==1.0.0
 six==1.11.0
 tabulate==0.8.2
 wrapt==1.10.11
+tensorflow==1.4.1

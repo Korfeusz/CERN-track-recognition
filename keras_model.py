@@ -5,11 +5,12 @@ import keras
 from sklearn.base import BaseEstimator
 from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 class KerasDNN(BaseEstimator, KerasClassifier):
     def __init__(
         self,
-        input_shape: int,
+        input_shape: Tuple[int]=(1,),
         output_shape: Tuple[int]=(1,),
         layers: int=3,
         neurons: int=100,
