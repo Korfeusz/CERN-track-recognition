@@ -32,9 +32,9 @@ void write_to_file(){
     f4.open("chi2.csv",ios::out|ios::trunc );
     
     for(int i =0; i<1000; i++){
-    	tree1->GetEntry(rand()%+2415201);
-    	tree2->GetEntry(rand()%+3966795);
-    	tree3->GetEntry(rand()%+1062635);
+    	tree1->GetEntry(rand()%2415201);
+    	tree2->GetEntry(rand()%3966795);
+    	tree3->GetEntry(rand()%1062635);
     	
     	f2<<c1.has_MCParticle<<","<<c1.is_downstream_reconstructible<<","<<c1.has_MCParticle_not_electron<<","
 		<<c1.is_downstream_reconstructible_not_electron<<","<<c1.is_true_seed<<","<<c1.seed_chi2PerDoF<<","<<c1.seed_mva_value<<","<<c1.seed_nbIT<<","<<c1.seed_nLayers
