@@ -60,6 +60,8 @@ iteration = 100
 q = Population(g_parameter_options, fun_to_maximize, [0.001, 0.1], 0.8, pop) 
 
 for j in range(0, iteration):
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     q.generate_generation()
+
 
 plot_demo(q)

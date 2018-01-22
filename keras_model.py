@@ -59,7 +59,7 @@ class KerasDNN(BaseEstimator, KerasClassifier):
             loss=self.loss_metric,
             metrics=self.metrics
         )
-        model.fit(x, y, verbose=0, epochs=100)
+        model.fit(x, y, verbose=0, epochs=1)
         self.model = model
         return model
 

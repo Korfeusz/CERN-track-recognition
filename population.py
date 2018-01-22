@@ -21,7 +21,7 @@ class Population:
         self.total_best = -1e3
         self.mean = []
         self.stddev = []
-        #self.calc_fitness()
+        self.calc_fitness()
 
     def calc_fitness(self):
         _fenotypes = []
@@ -76,6 +76,8 @@ class Population:
                 if _bottom < _shot <= self.agent[_j].recursive_sum:
                     x = deepcopy(self.agent[_j])
                     _selected.append(x)
+        print("len: ", len(_selected))
+
         return _selected
 
     def cross(self, _selected):

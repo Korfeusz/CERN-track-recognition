@@ -11,7 +11,6 @@ class Chromosome:
         self.fun_to_maximize = fun_to_maximize
         self.genotype = genotype
         self.fenotype = 0
-        self.calc_fenotype()
         self.fitness = fitness
         self.recursive_sum = recursive_sum
 
