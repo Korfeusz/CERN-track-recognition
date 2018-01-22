@@ -76,8 +76,6 @@ class Population:
                 if _bottom < _shot <= self.agent[_j].recursive_sum:
                     x = deepcopy(self.agent[_j])
                     _selected.append(x)
-        print("len: ", len(_selected))
-
         return _selected
 
     def cross(self, _selected):

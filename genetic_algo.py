@@ -22,7 +22,13 @@ def fun_to_maximize(genotype):
     for i in range(1):
         x_train, x_test, y_train, y_test = train_test_split(learning_data.iloc[:, :-1],
                                                             learning_data['is_downstream_reconstructible'], test_size=0.4)
-        #here we create a model and calc its score
+        if genotype['statistical_op'] == 'standardize':
+            x_train = evaluate_to_pandas.standardize_data(x_train)
+            x_test = evaluate_to_pandas.standardize_data(x_test)
+        elif genotype['statistical_op'] == 'normalize':
+            x_train = evaluate_to_pandas.normalize_data(x_train)
+            x_test = evaluate_to_pandas.normalize_data(x_test)
+
         input_size = len(genotype["feature"])
         dnn_model = KerasDNN( (input_size,), (1,), genotype['layers'], genotype['neurons'],
                  genotype['activation'], genotype['loss_metric'], genotype['optimizer'],
@@ -66,7 +72,8 @@ g_parameter_options = {
 'kernel_initializer': parameter.SingleChoiceParameter( ['he_normal']),
 'feature' : parameter.MultipleChoiceParameter(size=len(learning_data.iloc[:, :-1].columns.values.tolist()),
                                                fixed_size=False,
-                                               value=learning_data.iloc[:, :-1].columns.values.tolist())
+                                               value=learning_data.iloc[:, :-1].columns.values.tolist()),
+'statistical_op' : parameter.SingleChoiceParameter(value=['standardize', 'normalize', 'do_nothing'])
 }
 
 @ex.config
@@ -78,7 +85,7 @@ def my_config():
 
 @ex.main
 def my_main(parameter_options, pop, iteration):
-    q = Population(g_parameter_options, fun_to_maximize, [0.001, 0.1], 0.8, pop)
+    q = Population(parameter_options, fun_to_maximize, [0.001, 0.1], 0.8, pop)
     for j in range(0, iteration):
         q.generate_generation()
     

@@ -13,16 +13,18 @@ def read_data(filepath='dsdt.csv'):
 
 def normalize_data(dat):
     x = dat.values
+    cols = dat.columns.values.tolist()
     min_max_scaler = preprocessing.MinMaxScaler()
     x_scaled = min_max_scaler.fit_transform(x)
-    dat_scaled = pd.DataFrame(x_scaled)
+    dat_scaled = pd.DataFrame(x_scaled, columns=cols)
     return dat_scaled
 
 def standardize_data(dat):
     x = dat.values
+    cols = dat.columns.values.tolist()
     scaler = StandardScaler()
     x = scaler.fit_transform(x)
-    standarized = pd.DataFrame(x)
+    standarized = pd.DataFrame(x, columns=cols)
     return standarized
 
 
