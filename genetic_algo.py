@@ -28,12 +28,12 @@ def fun_to_maximize(genotype):
     y = y_train
     
     #dnn_model = KerasDNN()
-    dnn_model()
-    dnn_model.predict( x )#here we need to put training data
+    dnn_model(x, y)
+    #dnn_model.fit(x, y )#here we need to put training data
 
     x_score = x_test[[genotype['feature']]]
     y_score = y_test
-    score = dnn_model.score(x_score, y_score)
+    score = dnn_model.eval(x_score, y_score)
     print ("Score: ", score)
     
     return score ##and here- testing data

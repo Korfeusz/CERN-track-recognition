@@ -36,11 +36,11 @@ class KerasDNN(BaseEstimator, KerasClassifier):
         self.kernel_initializer = kernel_initializer
         self.metrics = metrics
         self.last_layer_act = last_layer_act
-        
+        self.model = []
         super().__init__(**kwargs)
 
 
-    def __call__(self):
+    def __call__(self, x, y):
         inp = keras.layers.Input(self.input_shape)
 
         layer = inp
@@ -59,6 +59,7 @@ class KerasDNN(BaseEstimator, KerasClassifier):
             loss=self.loss_metric,
             metrics=self.metrics
         )
+        model.fit(x, y, verbose=0, epochs=100)
         self.model = model
         return model
 
@@ -66,11 +67,14 @@ class KerasDNN(BaseEstimator, KerasClassifier):
         return self.model.predict(x)
 
     def predict(self, x, **kwargs):
-        predictions = self.predict_proba(x, **kwargs)
+        predictions = self.model.predict(x, **kwargs)
         return np.argmax(predictions, axis=1)
     
     def score(self, x, y):
         preds = self.predict_proba(x)
         return roc_auc_score(y, preds)
-        
-        
+
+    def eval(self, x, y):
+        scores = self.model.evaluate(x, y)
+        print("\n%s: %.2f%%" % (self.model.metrics_names[1], scores[1]*100))
+        return scores[1]*100
