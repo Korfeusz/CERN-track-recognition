@@ -59,7 +59,7 @@ class KerasDNN(BaseEstimator, KerasClassifier):
             loss=self.loss_metric,
             metrics=self.metrics
         )
-        model.fit(x, y, verbose=0, epochs=100)
+        model.fit(x, y, verbose=0, epochs=1)
         self.model = model
         return model
 
@@ -76,5 +76,4 @@ class KerasDNN(BaseEstimator, KerasClassifier):
 
     def eval(self, x, y):
         scores = self.model.evaluate(x, y, verbose=0)
-        print("\n%s: %.2f%%" % (self.model.metrics_names[1], scores[1]*100))
         return scores[1]*100
