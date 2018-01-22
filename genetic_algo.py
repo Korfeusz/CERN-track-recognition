@@ -51,7 +51,7 @@ g_parameter_options = {
     'dropout': parameter.FloatParameter( (0.0, 1.0) ),
     #'metrics': parameter.SingleChoiceParameter( ['accuracy'] ), I couldn't make a List of class instances, so for now screw that option
     'last_layer_act': parameter.SingleChoiceParameter( ['softmax'] ), 
-    'kernel_initializer': parameter.SingleChoiceParameter( ['he_normal', 'he_uniform'] )
+    'kernel_initializer': parameter.SingleChoiceParameter( ['he_normal', 'he_uniform'] ),
     'feature': parameter.SingleChoiceParameter(learning_data.iloc[:, :-1].columns.values.tolist())
 }
     
