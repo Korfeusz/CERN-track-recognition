@@ -41,7 +41,7 @@ class MultipleChoiceParameter(Parameter):
                 size = random.randint(*self.size)
             else:
                 try:
-                    size = random.randint(0, self.size)
+                    size = random.randint(1, self.size)
                 except TypeError:
                     print("Size should be tuple or int not {}".format(type(self.size)))
                     return None

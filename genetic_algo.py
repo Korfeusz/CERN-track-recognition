@@ -14,7 +14,8 @@ def fun_to_maximize(genotype):
     x_train, x_test, y_train, y_test = train_test_split(learning_data.iloc[:, :-1],
                                                         learning_data['is_downstream_reconstructible'], test_size=0.4)
     #here we create a model and calc its score
-    dnn_model = KerasDNN( (1,), (1,), genotype['layers'], genotype['neurons'],
+    input_size = len(genotype["feature"])
+    dnn_model = KerasDNN( (input_size,), (1,), genotype['layers'], genotype['neurons'],
              genotype['activation'], genotype['loss_metric'], genotype['optimizer'],
              genotype['batch_norm'], genotype['dropout'], ['accuracy'],
              genotype['last_layer_act'], genotype['kernel_initializer'],
@@ -23,15 +24,14 @@ def fun_to_maximize(genotype):
     print("I am working!")
     
     print("Parameters: {}".format(genotype))
-    
-    x = x_train[[genotype['feature']]]
+    x = x_train[genotype['feature']]
     y = y_train
     
     #dnn_model = KerasDNN()
     dnn_model(x, y)
     #dnn_model.fit(x, y )#here we need to put training data
 
-    x_score = x_test[[genotype['feature']]]
+    x_score = x_test[genotype['feature']]
     y_score = y_test
     score = dnn_model.eval(x_score, y_score)
     print ("Score: ", score)
@@ -52,7 +52,10 @@ g_parameter_options = {
     #'metrics': parameter.SingleChoiceParameter( ['accuracy'] ), I couldn't make a List of class instances, so for now screw that option
     'last_layer_act': parameter.SingleChoiceParameter( ['softmax'] ), 
     'kernel_initializer': parameter.SingleChoiceParameter( ['he_normal', 'he_uniform'] ),
-    'feature': parameter.SingleChoiceParameter(learning_data.iloc[:, :-1].columns.values.tolist())
+    #'feature': parameter.SingleChoiceParameter(learning_data.iloc[:, :-1].columns.values.tolist()),
+    'feature' : parameter.MultipleChoiceParameter(size=len(learning_data.iloc[:, :-1].columns.values.tolist()),
+                                                   fixed_size=False,
+                                                   value=learning_data.iloc[:, :-1].columns.values.tolist())
 }
     
 pop = 20
