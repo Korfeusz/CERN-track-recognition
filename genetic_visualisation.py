@@ -1,10 +1,36 @@
-import numpy as np
 from pymongo import MongoClient
-import pprint
+import matplotlib.pyplot as plt
 
-filt = {}
-client = MongoClient()
-runs = client.sacred.runs.find(filt)[client.sacred.runs.find(filt).count()-1]
-pprint.pprint (runs['info']['runs_info'])
-# for i in range( pprint.pprint (runs['info']['runs_info']):
-#     pprint.pprint (runs['info']['runs_info'][i])
+
+def make_plot(filt={}):
+    client = MongoClient()
+    runs = client.sacred.runs.find(filt)[client.sacred.runs.find(filt).count()-1]
+    means = [x['mean'] for x in runs['info']['runs_info']]
+    means = [means[x:x + runs['config']['pop']] for x in range(0, len(means), runs['config']['pop'])]
+    feature_list = [x['parameters']['feature'] for x in runs['info']['runs_info']]
+    feature_list = [feature_list[x:x + runs['config']['pop']] for x in range(0,
+                                                                             len(feature_list),
+                                                                             runs['config']['pop'])]
+    feature_dict = {}
+    for feature in runs['config']['parameter_options']['feature']['value']:
+        counter_prepare = [[1 if feature in x else 0 for x in li] for li in feature_list]
+        feature_dict[feature] = [sum(x) for x in counter_prepare]
+
+    result_dict = {'means': means,
+                   'feature_count': feature_dict}
+    return result_dict
+
+
+def plot_feature(result_dict, feature,  name=''):
+    plt.plot(result_dict['feature_count'][feature], label=feature)
+    plt.legend(loc='lower right')
+    plt.savefig("".join([name, feature, "rys.pdf"]), dpi=72)
+    plt.clf()
+
+
+def plot_means(result_dict, name='mean'):
+    best = [max(x) for x in result_dict['means']]
+    plt.plot(best, label='Best in epoch')
+    plt.legend(loc='lower right')
+    plt.savefig("".join([name, "_rys.pdf"]), dpi=72)
+    plt.clf()

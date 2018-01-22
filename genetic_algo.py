@@ -1,7 +1,6 @@
 import parameter
 from population import Population
 from keras_model import KerasDNN
-from typing import Tuple
 import numpy as np
 from sklearn.model_selection import train_test_split
 import evaluate_to_pandas
@@ -9,17 +8,16 @@ from sacred.observers import MongoObserver
 from sacred import Experiment
 
 g_info_list = []
-
-g_pop = 2
-g_iteration = 2
-
+g_pop = 5
+g_iteration = 10
 learning_data = evaluate_to_pandas.read_data()
 ex = Experiment('hello_config')
 ex.observers.append(MongoObserver.create())
 
+
 def fun_to_maximize(genotype):
     scores = []
-    for i in range(1):
+    for i in range(3):
         x_train, x_test, y_train, y_test = train_test_split(learning_data.iloc[:, :-1],
                                                             learning_data['is_downstream_reconstructible'], test_size=0.4)
         if genotype['statistical_op'] == 'standardize':
@@ -50,14 +48,7 @@ def fun_to_maximize(genotype):
     
     info_dict = {'mean': np.mean(scores), 'parameters':  genotype}
     g_info_list.append(info_dict)
-    
-    
     return np.mean(scores)
-
-
-
-
-
 
 
 g_parameter_options = {
@@ -91,5 +82,5 @@ def my_main(parameter_options, pop, iteration):
     
     ex.info['runs_info'] = g_info_list
 
-    
-r = ex.run( config_updates={ 'parameter_options': g_parameter_options, 'pop': g_pop, 'iteration': g_iteration } )
+
+ex.run( config_updates={ 'parameter_options': g_parameter_options, 'pop': g_pop, 'iteration': g_iteration } )

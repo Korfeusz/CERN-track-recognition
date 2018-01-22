@@ -1,11 +1,10 @@
-import keras
 from typing import List, Tuple
 from keras.wrappers.scikit_learn import KerasClassifier
 import keras
 from sklearn.base import BaseEstimator
 from sklearn.metrics import roc_auc_score
-from sklearn.preprocessing import StandardScaler
 import numpy as np
+
 
 class KerasDNN(BaseEstimator, KerasClassifier):
     def __init__(
@@ -39,7 +38,6 @@ class KerasDNN(BaseEstimator, KerasClassifier):
         self.model = []
         super().__init__(**kwargs)
 
-
     def __call__(self, x, y):
         inp = keras.layers.Input(self.input_shape)
 
@@ -59,7 +57,7 @@ class KerasDNN(BaseEstimator, KerasClassifier):
             loss=self.loss_metric,
             metrics=self.metrics
         )
-        model.fit(x, y, verbose=0, epochs=1)
+        model.fit(x, y, verbose=0, epochs=50)
         self.model = model
         return model
 

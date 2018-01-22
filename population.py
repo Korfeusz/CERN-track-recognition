@@ -7,7 +7,7 @@ import random
 
 class Population:
     def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop):
-        self.pop = pop #wielkosc populacji
+        self.pop = pop
         self.parameter_options = parameter_options
         self.fun_to_maximize = fun_to_maximize
         self.p_mut_low = p_mut_range[0]
@@ -36,7 +36,6 @@ class Population:
         _fitness = [x / total_area for x in _fitness]
         for _i in range(0, self.pop):
             self.agent[_i].fitness = _fitness[_i]
-        # Finding current and total best
         self.best.append(max(_fenotypes))
         _mean = sum(_fenotypes) / self.pop
         self.mean.append(_mean)
