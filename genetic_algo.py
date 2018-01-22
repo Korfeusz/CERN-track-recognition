@@ -8,11 +8,11 @@ from sklearn.model_selection import train_test_split
 import evaluate_to_pandas
 
 learning_data = evaluate_to_pandas.read_data()
-x_train, x_test, y_train, y_test = train_test_split(learning_data.iloc[:, :-1],
-                                                    learning_data['is_downstream_reconstructible'], test_size=0.4)
+
 
 def fun_to_maximize(genotype):
-    
+    x_train, x_test, y_train, y_test = train_test_split(learning_data.iloc[:, :-1],
+                                                        learning_data['is_downstream_reconstructible'], test_size=0.4)
     #here we create a model and calc its score
     dnn_model = KerasDNN( (1,), (1,), genotype['layers'], genotype['neurons'],
              genotype['activation'], genotype['loss_metric'], genotype['optimizer'],
