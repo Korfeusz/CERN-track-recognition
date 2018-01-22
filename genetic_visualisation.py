@@ -38,3 +38,12 @@ def plot_means(result_dict, name='mean'):
     plt.xlabel('Epoch')
     plt.savefig("".join([name, "_rys.pdf"]), dpi=72)
     plt.clf()
+
+def plot_all_features(result_dict, name='features'):
+    for feature in result_dict['feature_count']:
+        plt.plot(result_dict['feature_count'][feature], label=feature)
+    plt.legend(loc='lower right')
+    plt.ylabel('Number of features')
+    plt.xlabel('Epoch')
+    plt.savefig("".join([name, "rys.pdf"]), dpi=72)
+    plt.clf()
