@@ -23,8 +23,8 @@ void write_to_file(){
     	tree1->GetEntry(rand()%2415201);
     	
     	
-    	f2<<c1.is_downstream_reconstructible<<","<<c1.seed_chi2PerDoF<<","<<c1.seed_nbIT<<","<<c1.seed_nLayers
-		<<","<<c1.seed_nLHCbIDs<<","<<c1.seed_p<<","<<c1.seed_pt<<","<<c1.seed_tx<<","<<c1.seed_ty<<","<<c1.seed_x<<","<<c1.seed_y<<endl;
+    	f2<<c1.seed_chi2PerDoF<<","<<c1.seed_nbIT<<","<<c1.seed_nLayers
+		<<","<<c1.seed_nLHCbIDs<<","<<c1.seed_p<<","<<c1.seed_pt<<","<<c1.seed_tx<<","<<c1.seed_ty<<","<<c1.seed_x<<","<<c1.seed_y<<","<<c1.is_downstream_reconstructible<<endl;
 		
 				
     		
