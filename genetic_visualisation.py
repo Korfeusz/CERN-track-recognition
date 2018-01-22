@@ -24,6 +24,8 @@ def make_plot(filt={}):
 def plot_feature(result_dict, feature,  name=''):
     plt.plot(result_dict['feature_count'][feature], label=feature)
     plt.legend(loc='lower right')
+    plt.ylabel('Number of features')
+    plt.xlabel('Epoch')
     plt.savefig("".join([name, feature, "rys.pdf"]), dpi=72)
     plt.clf()
 
@@ -32,5 +34,7 @@ def plot_means(result_dict, name='mean'):
     best = [max(x) for x in result_dict['means']]
     plt.plot(best, label='Best in epoch')
     plt.legend(loc='lower right')
+    plt.ylabel('Mean accuracy')
+    plt.xlabel('Epoch')
     plt.savefig("".join([name, "_rys.pdf"]), dpi=72)
     plt.clf()
