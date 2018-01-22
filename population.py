@@ -21,7 +21,7 @@ class Population:
         self.total_best = -1e3
         self.mean = []
         self.stddev = []
-        self.calc_fitness()
+        #self.calc_fitness()
 
     def calc_fitness(self):
         _fenotypes = []

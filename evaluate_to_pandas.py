@@ -6,3 +6,4 @@ def read_data(filepath='dsdt.csv'):
     result = pd.read_csv(filepath, names=cols1, index_col=False)
     result = result[['seed_chi2PerDoF', 'seed_p', 'seed_pt', 'seed_nLHCbIDs' , 'seed_nbIT'  , 'seed_nLayers', 'seed_x' , 'seed_y' , 'seed_tx', 'seed_ty', 'is_downstream_reconstructible']]
     return result
+
