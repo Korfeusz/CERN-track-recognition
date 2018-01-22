@@ -44,14 +44,14 @@ g_parameter_options = {
     #'output_shape': Tuple[ parameter.IntParameter( (0,10) )], Does not work for now but I don't know if it will be necessery
     'layers' : parameter.IntParameter( (1,20) ),
     'neurons': parameter.IntParameter( (1,20) ),
-    'activation': parameter.SingleChoiceParameter( ['relu'] ),
+    'activation': parameter.SingleChoiceParameter( ['relu', 'tanh', 'softmax'] ),
     'loss_metric': parameter.SingleChoiceParameter( ['binary_crossentropy'] ), 
-    'optimizer': parameter.SingleChoiceParameter( ['adam'] ),
+    'optimizer': parameter.SingleChoiceParameter( ['adam',  'adamax'] ),
     'batch_norm': parameter.SingleChoiceParameter( [True, False] ), #I wonder if it's better to use IntParameter with (0,1) range repr. boolean?
     'dropout': parameter.FloatParameter( (0.0, 1.0) ),
     #'metrics': parameter.SingleChoiceParameter( ['accuracy'] ), I couldn't make a List of class instances, so for now screw that option
     'last_layer_act': parameter.SingleChoiceParameter( ['softmax'] ), 
-    'kernel_initializer': parameter.SingleChoiceParameter( ['he_normal'] ),
+    'kernel_initializer': parameter.SingleChoiceParameter( ['he_normal', 'he_uniform'] )
     'feature': parameter.SingleChoiceParameter(learning_data.iloc[:, :-1].columns.values.tolist())
 }
     
