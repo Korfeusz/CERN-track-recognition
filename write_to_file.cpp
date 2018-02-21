@@ -19,7 +19,8 @@ void write_to_file(){
     fstream f2;
     f2.open("dsdt.csv", ios::out|ios::trunc);
   
-    for(int i =0; i<1000; i++){
+    for(int i =0; i<10000; i++){
+	std::cout << i << std::endl;
     	tree1->GetEntry(rand()%2415201);
     	
     	
