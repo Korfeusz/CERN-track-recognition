@@ -25,17 +25,17 @@ g_parameter_options = {
 @ex.config
 def my_config():
     parameter_options = g_parameter_options
-    pop = 20
-    iteration = 100
+    pop = 1
+    iteration = 0
 
 
-@ex.automain
+@ex.main
 def my_main(parameter_options, pop, iteration):
 
     q = population.Population(g_parameter_options, fun_to_maximize, [0.001, 0.1], 0.8, pop)
     for j in range(0, iteration):
+        print ('iteration = ', j)
         q.generate_generation()
-        
 
-    
+
 r = ex.run( config_updates={ 'parameter_options': g_parameter_options } )

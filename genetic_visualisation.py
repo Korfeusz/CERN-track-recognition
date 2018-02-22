@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 
@@ -47,3 +49,7 @@ def plot_all_features(result_dict, name='features'):
     plt.xlabel('Epoch')
     plt.savefig("".join([name, "rys.pdf"]), dpi=72)
     plt.clf()
+    
+if __name__=='__main__':
+    feature_dict = make_plot()
+    plot_all_features(feature_dict)

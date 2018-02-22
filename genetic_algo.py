@@ -9,7 +9,7 @@ from sacred import Experiment
 
 g_info_list = []
 g_pop = 5
-g_iteration = 10
+g_iteration = 2
 learning_data = evaluate_to_pandas.read_data()
 ex = Experiment('hello_config')
 ex.observers.append(MongoObserver.create())
@@ -77,7 +77,9 @@ def my_config():
 @ex.main
 def my_main(parameter_options, pop, iteration):
     q = Population(parameter_options, fun_to_maximize, [0.001, 0.1], 0.8, pop)
+    print("Population created")
     for j in range(0, iteration):
+        print("Iteration: ", j + 1)
         q.generate_generation()
     
     ex.info['runs_info'] = g_info_list
