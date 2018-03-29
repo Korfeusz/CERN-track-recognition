@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 import evaluate_to_pandas
 from sacred.observers import MongoObserver
 from sacred import Experiment
+import time
 
 g_info_list = []
 g_pop = 20
@@ -89,13 +90,18 @@ def my_config():
 
 @ex.main
 def my_main(parameter_options, pop, iteration):
-    q = Population(parameter_options, fun_to_test, [0.001, 0.1], 0.8, pop)
-    print("Population created")
-    for j in range(0, iteration):
-        print("Iteration: ", j + 1)
-        q.generate_generation()
-    print('Total best:', q.total_best)
-
+    bst = []
+    t0 = time.time()
+    for _ in range(20):
+        q = Population(parameter_options, fun_to_test, [0.001, 0.1], 0.8, pop)
+        print("Population created")
+        for j in range(0, iteration):
+            # print("Iteration: ", j + 1)
+            q.generate_generation()
+        bst.append(q.total_best)
+    # print('Total best:', q.total_best)
+    print('bst: ', np.mean(bst))
+    print('time: ', time.time() - t0)
     ex.info['runs_info'] = g_info_list
 
 

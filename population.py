@@ -7,14 +7,17 @@ import numpy as np
 
 class Population:
     def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop):
-        self.pop = pop
+        if pop % 2 == 0:
+            self.pop = pop
+        else:
+            self.pop = pop + 1
         self.parameter_options = parameter_options
         self.fun_to_maximize = fun_to_maximize
         self.p_mut_low = p_mut_range[0]
         self.p_mut_high = p_mut_range[1]
         self.p_mut = self.p_mut_low
         self.p_cross = p_cross
-        self.agent = [Chromosome(self.parameter_options, self.fun_to_maximize) for _ in range(pop)]
+        self.agent = [Chromosome(self.parameter_options, self.fun_to_maximize) for _ in range(self.pop)]
         self.best = []
         self.total_best = -1e3
         self.mean = []
@@ -54,6 +57,8 @@ class Population:
         else:
             fitness = fenotypes
         total_area = sum(fitness)
+        if total_area == 0:
+            return [1/len(fitness) for _ in range(len(fitness))]
         return [x / total_area for x in fitness]
 
     def generate_generation(self):
@@ -66,18 +71,9 @@ class Population:
         self.total_best = max(self.best)
 
     def selection(self):
-        _selected = []
-        for _ in range(0, self.pop):
-            _shot = random.random()
-            for _j in range(0, self.pop):
-                if _j == 0:
-                    _bottom = 0
-                else:
-                    _bottom = self.agent[_j - 1].recursive_sum
-                if _bottom < _shot <= self.agent[_j].recursive_sum:
-                    x = deepcopy(self.agent[_j])
-                    _selected.append(x)
-        return _selected
+        fitness = [x.fitness for x in self.agent]
+        choices = list(np.random.choice(a=len(self.agent), size=self.pop, p=fitness, replace=True))
+        return [deepcopy(self.agent[choice]) for choice in choices]
 
     def cross(self, _selected):
         _new_generation = []
