@@ -3,7 +3,7 @@ import math
 import operator
 from copy import deepcopy
 import random
-
+import numpy as np
 
 class Population:
     def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop):
@@ -14,9 +14,7 @@ class Population:
         self.p_mut_high = p_mut_range[1]
         self.p_mut = self.p_mut_low
         self.p_cross = p_cross
-        self.agent = []
-        for _ in range(0, pop):
-            self.agent.append(Chromosome(self.parameter_options, self.fun_to_maximize))
+        self.agent = [Chromosome(self.parameter_options, self.fun_to_maximize) for _ in range(pop)]
         self.best = []
         self.total_best = -1e3
         self.mean = []
@@ -24,35 +22,39 @@ class Population:
         self.calc_fitness()
 
     def calc_fitness(self):
-        _fenotypes = []
-        for _i in range(0, self.pop):
-            self.agent[_i].calc_fenotype()
-            _fenotypes.append(self.agent[_i].fenotype)
-        _offset = 0
-        if min(_fenotypes) < 0:
-            _offset = abs(min(_fenotypes))
-        _fitness = [x + _offset for x in _fenotypes]
-        total_area = sum(_fitness)
-        _fitness = [x / total_area for x in _fitness]
-        for _i in range(0, self.pop):
-            self.agent[_i].fitness = _fitness[_i]
-        self.best.append(max(_fenotypes))
-        _mean = sum(_fenotypes) / self.pop
-        self.mean.append(_mean)
-        _subsum = [(x - _mean) ** 2 for x in _fenotypes]
-        self.stddev.append(math.sqrt(sum(_subsum) / self.pop))
+        fenotypes = self._calc_fenotypes()
+        self._calc_statistics(fenotypes)
+        normalized_fenotypes = self._normalize_fenotypes(fenotypes=fenotypes)
+        for i, ch in enumerate(self.agent):
+            ch.fitness = normalized_fenotypes[i]
+        self._sort_agents(fitness=normalized_fenotypes)
+
+    def _calc_fenotypes(self):
+        # Map reduce should happen here
+        for i in range(self.pop):
+            self.agent[i].calc_fenotype()
+        return [x.fenotype for x in self.agent]
+
+    def _calc_statistics(self, fenotypes):
+        self.best.append(max(fenotypes))
+        self.mean.append(sum(fenotypes) / self.pop)
+        self.stddev.append(np.std(fenotypes))
+
+    def _sort_agents(self, fitness):
         self.agent.sort(key=operator.attrgetter('fitness'))
-        _recursive_sum = 0
-        _agent = deepcopy(self.agent)
-        del self.agent
-        self.agent = []
-        for _i in range(0, self.pop):
-            _recursive_sum = _agent[_i].fitness + _recursive_sum
-            self.agent.append(Chromosome(self.parameter_options,
-                                         self.fun_to_maximize,
-                                         _agent[_i].genotype,
-                                         _agent[_i].fitness,
-                                         _recursive_sum))
+        cumsum = np.cumsum(np.sort(fitness))
+        for idx, element in enumerate(self.agent):
+            element.recursive_sum = cumsum[idx]
+
+    @staticmethod
+    def _normalize_fenotypes(fenotypes):
+        if min(fenotypes) < 0:
+            offset = abs(min(fenotypes))
+            fitness = [x + offset for x in fenotypes]
+        else:
+            fitness = fenotypes
+        total_area = sum(fitness)
+        return [x / total_area for x in fitness]
 
     def generate_generation(self):
         _selected = self.selection()

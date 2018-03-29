@@ -8,7 +8,7 @@ from sacred.observers import MongoObserver
 from sacred import Experiment
 
 g_info_list = []
-g_pop = 50
+g_pop = 20
 g_iteration = 200
 learning_data = evaluate_to_pandas.read_data()
 ex = Experiment('hello_config')
