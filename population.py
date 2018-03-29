@@ -5,6 +5,7 @@ from copy import deepcopy
 import random
 import numpy as np
 
+
 class Population:
     def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop):
         if pop % 2 == 0:
@@ -62,10 +63,10 @@ class Population:
         return [x / total_area for x in fitness]
 
     def generate_generation(self):
-        _selected = self.selection()
-        _selected = self.cross(_selected)
-        _selected = self.mutate(_selected)
-        self.agent = _selected
+        selected = self.selection()
+        selected = self.cross(selected)
+        selected = self.mutate(selected)
+        self.agent = selected
         self.calc_fitness()
         self.dynamic_p_mutate()
         self.total_best = max(self.best)
@@ -75,30 +76,32 @@ class Population:
         choices = list(np.random.choice(a=len(self.agent), size=self.pop, p=fitness, replace=True))
         return [deepcopy(self.agent[choice]) for choice in choices]
 
-    def cross(self, _selected):
-        _new_generation = []
-        for _ in range(0, int(math.ceil(self.pop * self.p_cross / 2))):
-            _sample = random.sample(_selected, 2)
-            _selected.remove(_sample[0])
-            _selected.remove(_sample[1])
-            _new_generation.extend((self.cross_single(_sample)))
-        _new_generation.extend(_selected)
-        return _new_generation
+    def cross(self, selected):
+        new_generation = []
+        number_to_cross = int(math.ceil(self.pop * self.p_cross / 2))
+        for _ in range(number_to_cross):
+            sample = random.sample(selected, 2)
+            selected.remove(sample[0])
+            selected.remove(sample[1])
+            new_generation.extend((self.cross_single(sample)))
+        new_generation.extend(selected)
+        return new_generation
 
-    def cross_single(self, _sample):
-        _chro_1 = _sample[0]
-        _chro_2 = _sample[1]
+    def cross_single(self, sample):
+        chro_1 = sample[0]
+        chro_2 = sample[1]
         random_key_number = random.randint(1, len(self.parameter_options))
         random_keys = random.sample(self.parameter_options.keys(), random_key_number)
         for key in random_keys:
-            _chro_1.genotype[key], _chro_2.genotype[key] = _chro_2.genotype[key], _chro_1.genotype[key]
-        return [_chro_1, _chro_2]
+            chro_1.genotype[key], chro_2.genotype[key] = chro_2.genotype[key], chro_1.genotype[key]
+        return [chro_1, chro_2]
 
-    def mutate(self, _selected):
-        for _ in range(0, int(math.ceil(self.pop * len(self.parameter_options) * self.p_mut))):
-            _ra_index = random.randint(0, self.pop - 1)
-            _selected[_ra_index].mutate()
-        return _selected
+    def mutate(self, selected):
+        number_to_mutate = int(math.ceil(self.pop * len(self.parameter_options) * self.p_mut))
+        for _ in range(number_to_mutate):
+            ra_index = random.randint(0, self.pop - 1)
+            selected[ra_index].mutate()
+        return selected
 
     def dynamic_p_mutate(self):
         if self.stddev[-1] < 0.2:
