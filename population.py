@@ -4,10 +4,12 @@ import operator
 from copy import deepcopy
 import random
 import numpy as np
+from multiprocessing import Pool
+import time
 
 
 class Population:
-    def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop):
+    def __init__(self, parameter_options, fun_to_maximize, p_mut_range, p_cross, pop, multiprocess=False, processes=4):
         if pop % 2 == 0:
             self.pop = pop
         else:
@@ -23,10 +25,15 @@ class Population:
         self.total_best = -1e3
         self.mean = []
         self.stddev = []
+        self.multiprocess = multiprocess
+        self.processes = processes
         self.calc_fitness()
 
     def calc_fitness(self):
-        fenotypes = self._calc_fenotypes()
+        if self.multiprocess:
+            fenotypes = self._calc_fenotypes_multiprocess()
+        else:
+            fenotypes = self._calc_fenotypes()
         self._calc_statistics(fenotypes)
         normalized_fenotypes = self._normalize_fenotypes(fenotypes=fenotypes)
         for i, ch in enumerate(self.agent):
@@ -34,10 +41,21 @@ class Population:
         self._sort_agents(fitness=normalized_fenotypes)
 
     def _calc_fenotypes(self):
-        # Map reduce should happen here
         for i in range(self.pop):
             self.agent[i].calc_fenotype()
         return [x.fenotype for x in self.agent]
+
+    def _calc_fenotypes_multiprocess(self):
+        with Pool(self.processes) as p:
+            fenotypes = p.map(func=self._calc_fenotype_of_agent, iterable=self.agent)
+        for i, c in enumerate(self.agent):
+            c.fenotype = fenotypes[i]
+        return [x.fenotype for x in self.agent]
+
+    @staticmethod
+    def _calc_fenotype_of_agent(agent: Chromosome):
+        agent.calc_fenotype()
+        return agent.fenotype
 
     def _calc_statistics(self, fenotypes):
         self.best.append(max(fenotypes))

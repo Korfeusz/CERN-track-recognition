@@ -9,8 +9,10 @@ from sacred import Experiment
 import time
 
 g_info_list = []
-g_pop = 20
-g_iteration = 200
+g_pop = 10
+g_iteration = 1
+g_multiprocess = True
+g_processes = 7
 learning_data = evaluate_to_pandas.read_data()
 ex = Experiment('hello_config')
 ex.observers.append(MongoObserver.create())
@@ -53,32 +55,21 @@ def fun_to_maximize(genotype):
     return np.mean(scores)
 
 
-def fun_to_test(genotype):
-    x = genotype['x']
-    y = genotype['y']
-    return -(-20*np.exp(-0.2*np.sqrt(0.5*(x**2 + y**2))) - np.exp(0.5*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))) + np.e + 20)
-
-
 g_parameter_options = {
-    'x': parameter.FloatParameter((-5.0, 5.0)),
-    'y': parameter.FloatParameter((-5.0, 5.0))
+    'layers': parameter.IntParameter((1, 5)),
+    'neurons': parameter.IntParameter((1, 5)),
+    'activation': parameter.SingleChoiceParameter(['relu']),
+    'loss_metric': parameter.SingleChoiceParameter(['binary_crossentropy']),
+    'optimizer': parameter.SingleChoiceParameter(['adam']),
+    'batch_norm': parameter.SingleChoiceParameter([True]),
+    'dropout': parameter.FloatParameter((0.0, 0.2)),
+    'last_layer_act': parameter.SingleChoiceParameter(['softmax']),
+    'kernel_initializer': parameter.SingleChoiceParameter(['he_normal']),
+    'feature': parameter.MultipleChoiceParameter(size=len(learning_data.iloc[:, :-1].columns.values.tolist()),
+                                                 fixed_size=False,
+                                                 value=learning_data.iloc[:, :-1].columns.values.tolist()),
+    'statistical_op': parameter.SingleChoiceParameter(value=['standardize', 'normalize', 'do_nothing'])
 }
-
-# g_parameter_options = {
-#     'layers': parameter.IntParameter((1, 5)),
-#     'neurons': parameter.IntParameter((1, 5)),
-#     'activation': parameter.SingleChoiceParameter(['relu']),
-#     'loss_metric': parameter.SingleChoiceParameter(['binary_crossentropy']),
-#     'optimizer': parameter.SingleChoiceParameter(['adam']),
-#     'batch_norm': parameter.SingleChoiceParameter([True]),
-#     'dropout': parameter.FloatParameter((0.0, 0.2)),
-#     'last_layer_act': parameter.SingleChoiceParameter(['softmax']),
-#     'kernel_initializer': parameter.SingleChoiceParameter(['he_normal']),
-#     'feature': parameter.MultipleChoiceParameter(size=len(learning_data.iloc[:, :-1].columns.values.tolist()),
-#                                                  fixed_size=False,
-#                                                  value=learning_data.iloc[:, :-1].columns.values.tolist()),
-#     'statistical_op': parameter.SingleChoiceParameter(value=['standardize', 'normalize', 'do_nothing'])
-# }
 
 
 @ex.config
@@ -86,23 +77,28 @@ def my_config():
     parameter_options = g_parameter_options
     pop = g_pop
     iteration = g_iteration
+    processes = g_processes
+    multiprocess = g_multiprocess
 
 
 @ex.main
-def my_main(parameter_options, pop, iteration):
+def my_main(parameter_options, pop, iteration, processes, multiprocess):
     bst = []
     t0 = time.time()
-    for _ in range(20):
-        q = Population(parameter_options, fun_to_test, [0.001, 0.1], 0.8, pop)
-        print("Population created")
-        for j in range(0, iteration):
-            # print("Iteration: ", j + 1)
-            q.generate_generation()
-        bst.append(q.total_best)
-    # print('Total best:', q.total_best)
-    print('bst: ', np.mean(bst))
-    print('time: ', time.time() - t0)
+
+    q = Population(parameter_options, fun_to_maximize, [0.001, 0.1], 0.8, pop, multiprocess=multiprocess, processes=processes)
+    print("Population created")
+    for j in range(0, iteration):
+        print("Iteration: ", j + 1)
+        q.generate_generation()
+    bst.append(q.total_best)
+    print('Total best:', q.total_best)
+    print('Time: ', time.time() - t0)
     ex.info['runs_info'] = g_info_list
 
 
-ex.run(config_updates={'parameter_options': g_parameter_options, 'pop': g_pop, 'iteration': g_iteration})
+ex.run(config_updates={'parameter_options': g_parameter_options,
+                       'pop': g_pop,
+                       'iteration': g_iteration,
+                       'processes': g_processes,
+                       'multiprocess': g_multiprocess})
